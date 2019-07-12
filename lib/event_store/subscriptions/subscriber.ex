@@ -1,12 +1,14 @@
 defmodule EventStore.Subscriptions.Subscriber do
   @moduledoc false
 
+  @default_buffer_size 100
+
   defstruct [
     :pid,
     :ref,
     :partition_key,
     last_sent: 0,
-    buffer_size: 1,
+    buffer_size: @default_buffer_size,
     in_flight: []
   ]
 
@@ -20,7 +22,7 @@ defmodule EventStore.Subscriptions.Subscriber do
   def available?(%Subscriber{in_flight: []}), do: true
 
   def available?(%Subscriber{in_flight: in_flight, buffer_size: buffer_size}),
-    do: length(in_flight) < buffer_size
+    do: length(in_flight) < @default_buffer_size
 
   @doc """
   Is the given event in the same partition as any in-flight events?
